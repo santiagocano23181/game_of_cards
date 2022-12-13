@@ -4,7 +4,6 @@ import GameContext from './GameContext';
 
 const GameProvider = ({ children }) => {
 	const [idGame, setIdGame] = useState(null);
-	const [win, setWin] = useState(false);
 	const [showToast, setShowToast] = useState(false);
 	const [winName, setWinName] = useState('');
 	const [playerOne, setPlayerOne] = useState({
@@ -66,7 +65,7 @@ const GameProvider = ({ children }) => {
 			terna2: [],
 			cuarta: [],
 		};
-		let playerCompleted = {
+		const playerCompleted = {
 			terna: false,
 			terna2: false,
 			cuarta: false,
@@ -74,7 +73,7 @@ const GameProvider = ({ children }) => {
 		cards = cards.sort(compare);
 		let restCards = [...cards];
 		cards.forEach(card => {
-			let cardsCuartaByValue = cards.filter(cardCuarta => {
+			const cardsCuartaByValue = cards.filter(cardCuarta => {
 				return cardCuarta.value === card.value && cardCuarta.suit !== card.suit;
 			});
 			if (playerCards.cuarta.length <= cardsCuartaByValue.length) {
@@ -93,7 +92,7 @@ const GameProvider = ({ children }) => {
 					playerCompleted.cuarta = true;
 				}
 			}
-			let cardsCuartaBySuit = cards.filter(cardCuarta => {
+			const cardsCuartaBySuit = cards.filter(cardCuarta => {
 				return cardCuarta.suit === card.suit && card.value !== cardCuarta.value;
 			});
 			if (playerCards.cuarta.length < cardsCuartaBySuit.length) {
@@ -122,7 +121,7 @@ const GameProvider = ({ children }) => {
 		cards = [...restCards];
 
 		cards.forEach(card => {
-			let cardsTernaByValue = cards.filter(cardTerna => {
+			const cardsTernaByValue = cards.filter(cardTerna => {
 				return cardTerna.value === card.value && cardTerna.suit !== card.suit;
 			});
 			if (playerCards.terna.length <= cardsTernaByValue.length) {
@@ -140,7 +139,7 @@ const GameProvider = ({ children }) => {
 					playerCompleted.terna = true;
 				}
 			}
-			let cardsTernaBySuit = cards.filter(cardTerna => {
+			const cardsTernaBySuit = cards.filter(cardTerna => {
 				return cardTerna.suit === card.suit && card.value !== cardTerna.value;
 			});
 			if (playerCards.terna.length < cardsTernaBySuit.length) {
@@ -166,7 +165,7 @@ const GameProvider = ({ children }) => {
 		});
 		cards = [...restCards];
 		cards.forEach(card => {
-			let cardsTerna2ByValue = cards.filter(cardTerna2 => {
+			const cardsTerna2ByValue = cards.filter(cardTerna2 => {
 				return cardTerna2.value === card.value && cardTerna2.suit !== card.suit;
 			});
 			if (playerCards.terna2.length <= cardsTerna2ByValue.length) {
@@ -185,7 +184,7 @@ const GameProvider = ({ children }) => {
 					playerCompleted.terna2 = true;
 				}
 			}
-			let cardsTerna2BySuit = cards.filter(cardTerna2 => {
+			const cardsTerna2BySuit = cards.filter(cardTerna2 => {
 				return cardTerna2.suit === card.suit && card.value !== cardTerna2.value;
 			});
 			if (playerCards.terna2.length < cardsTerna2BySuit.length) {
@@ -261,18 +260,18 @@ const GameProvider = ({ children }) => {
 	};
 
 	const changeCard = (card, player, setPlayer) => {
-		let cards = { ...player.cards };
-		let cuarta = undefined;
+		const cards = { ...player.cards };
+		let cuarta;
 		if (player.completed.terna2 === false) {
 			cuarta = changeInArray([...cards.cuarta], 4, card);
 		}
 		if (cuarta === undefined) {
-			let terna = undefined;
+			let terna;
 			if (player.completed.terna === false) {
 				terna = changeInArray([...cards.terna], 3, card);
 			}
 			if (terna === undefined) {
-				let terna2 = undefined;
+				let terna2;
 				if (player.completed.terna2 === false) {
 					terna2 = changeInArray([...cards.terna2], 3, card);
 				}
@@ -282,77 +281,79 @@ const GameProvider = ({ children }) => {
 					if (player.completed.terna2 === false) {
 						cards.terna2 = terna2;
 						cards.terna2 = cards.terna2.sort(compare);
-						setPlayer({ ...player, cards: cards });
+						setPlayer({ ...player, cards });
 					}
 				}
 			} else {
 				if (player.completed.terna === false) {
 					cards.terna = terna;
 					cards.terna = cards.terna.sort(compare);
-					setPlayer({ ...player, cards: cards });
+					setPlayer({ ...player, cards });
 				}
 			}
 		} else {
 			if (player.completed.cuarta === false) {
 				cards.cuarta = cuarta;
 				cards.cuarta = cards.cuarta.sort(compare);
-				setPlayer({ ...player, cards: cards });
+				setPlayer({ ...player, cards });
 			}
 		}
 		return false;
 	};
 
 	const changeInArray = (list, number, card) => {
-		let repited = list.filter(c => {
+		const repited = list.filter(c => {
 			return c.code === card.code;
 		});
 		if(repited.length > 0){
 			return undefined;
 		}
-		let filterListByValue = list.filter(c => {
+		const filterListByValue = list.filter(c => {
 			return c.value === card.value;
 		});
 		if (filterListByValue.length > 1 && filterListByValue.length < number) {
-			let findSame = filterListByValue.find(e => {
-				e.suit === card.suit;
+			const findSame = filterListByValue.find(e => {
+				return e.suit === card.suit;
 			});
 			if (findSame === undefined) {
-				let findDiferent = list.find(c => {
+				const findDiferent = list.find(c => {
 					return c.value !== card.value;
 				});
-				let index = list.findIndex((e, i) => {
+				const index = list.findIndex((e, i) => {
 					if (e.code === findDiferent.code) {
 						return true;
 					}
+					return false;
 				});
 
 				list[index] = card;
 				return list;
 			}
 		}
-		let filterListBySuit0 = list.filter(c => {
+		const filterListBySuit0 = list.filter(c => {
 			return list[0].suit === c.suit;
 		});
 		if(filterListBySuit0.length === 1){
 			list[0] = card;
 			return list;
 		}
-		let filterListBySuit = list.filter(c => {
+		const filterListBySuit = list.filter(c => {
 			return c.suit === card.suit;
 		});
 		if (filterListBySuit.length > 1 && filterListBySuit.length < number) {
-			let findDiferent = list.find(c => {
+			const findDiferent = list.find(c => {
 				return c.suit !== card.suit;
 			});
-			let index = list.findIndex((e, i) => {
+			const index = list.findIndex((e, i) => {
 				if (e.code === findDiferent.code) {
 					return true;
 				}
+				return false;
 			});
 			list[index] = card;
 			return list;
 		} else if (filterListBySuit.length === number) {
-			let replace = undefined;
+			let replace;
 			let i = 0;
 			while (i < filterListBySuit.length - 1) {
 				if (
@@ -366,9 +367,9 @@ const GameProvider = ({ children }) => {
 						} else if (i === number - 1) {
 							replace = filterListBySuit[i + 1];
 						} else {
-							let menos1 =
+							const menos1 =
 								filterListBySuit[i].value - filterListBySuit[i - 1].value;
-							let mas1 =
+							const mas1 =
 								filterListBySuit[i + 1].value - filterListBySuit[i].value;
 							if (menos1 <= mas1) {
 								replace = filterListBySuit[i + 1];
@@ -381,10 +382,11 @@ const GameProvider = ({ children }) => {
 				i++;
 			}
 			if (replace !== undefined) {
-				let index = filterListBySuit.findIndex((e, i) => {
+				const index = filterListBySuit.findIndex((e, i) => {
 					if (e.code === replace.code) {
 						return true;
 					}
+					return false;
 				});
 				list[index] = card;
 				return list;
@@ -405,14 +407,14 @@ const GameProvider = ({ children }) => {
 	};
 
 	const validateWinnerList = async (list, number) => {
-		let card = list[0];
-		let filterListByValue = list.filter(e => {
+		const card = list[0];
+		const filterListByValue = list.filter(e => {
 			return card.value === e.value;
 		});
 		if (filterListByValue.length === number) {
 			return true;
 		}
-		let filterListBySuit = list.filter(e => {
+		const filterListBySuit = list.filter(e => {
 			return card.suit === e.suit;
 		});
 		if (filterListBySuit.length === number) {
@@ -424,7 +426,7 @@ const GameProvider = ({ children }) => {
 	};
 
 	const validateWinner = async (player, setPlayer) => {
-		let com = {};
+		const com = {};
 		com.cuarta = await validateWinnerList(player.cards.cuarta, 4);
 		com.terna = await validateWinnerList(player.cards.terna, 3);
 		com.terna2 = await validateWinnerList(player.cards.terna2, 3);
@@ -438,27 +440,26 @@ const GameProvider = ({ children }) => {
 
 	const requestCards = async () => {
 		const cards = await DeckOfCardsAPI.getCards(idGame, 2);
-		let cardsValue = await changeLetters(cards);
+		const cardsValue = await changeLetters(cards);
 
 		let completed = playerOne.completed;
-		let playerOneStatus =
+		const playerOneStatus =
 			completed.cuarta && completed.terna && completed.terna2;
 		completed = playerTwo.completed;
-		let playerTwoStatus =
+		const playerTwoStatus =
 			completed.cuarta && completed.terna && completed.terna2;
 
 		if (playerOneStatus || playerTwoStatus) {
-			setWin(true);
 			setShowToast(true);
 			setWinName(playerOneStatus ? playerOne.name : playerTwo.name);
 			return;
 		}
 		if (cardsValue.length === 0) {
-			/*setWin(true);
 			setShowToast(true);
-			setWinName('EMPATE');*/
-			playGame();
-			return;
+			setWinName('EMPATE');
+			
+			/* playGame();
+			return; */
 		}
 		changeCard(cardsValue[0], playerOne, setPlayerOne);
 		changeCard(cardsValue[1], playerTwo, setPlayerTwo);
